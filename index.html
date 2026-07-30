@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گفتگو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#0F1A2E;--panel:#15223B;--panel2:#1C2C4A;--elev:#22335640;--border:#2A3B5C;
+--teal:#2FC9BC;--teal-dim:#2FC9BC26;--gold:#E8A33D;--gold-dim:#E8A33D22;
+--text:#F1EEE6;--muted:#8C9BB8;--danger:#E4574C;--online:#3FCB8C;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+button,input{font-family:inherit}
+button{cursor:pointer}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px}
+#login-screen{height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse 700px 500px at 50% -10%,#1B2E4E 0%,transparent 60%),var(--bg)}
+.auth-card{width:min(420px,100%);padding:30px;background:rgba(21,34,59,.96);border:1px solid var(--border);border-radius:24px;box-shadow:0 30px 90px #0007;backdrop-filter:blur(20px);animation:in .3s ease}
+@keyframes in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.auth-brand{text-align:center;margin-bottom:22px}.auth-logo{width:64px;height:64px;margin:0 auto 14px;border-radius:18px;background:linear-gradient(135deg,var(--teal),#1C8B80);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 12px 35px #2FC9BC30}.auth-brand h1{font-size:25px;font-weight:900}.auth-brand p{color:var(--muted);font-size:13px;margin-top:5px}
+.auth-tabs{display:flex;gap:5px;background:var(--bg);padding:5px;border-radius:12px;margin-bottom:20px}.auth-tabs button{flex:1;padding:11px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-weight:700}.auth-tabs button.active{background:var(--teal);color:#06231F}
+.auth-form{display:none;flex-direction:column;gap:8px}.auth-form.active{display:flex}.auth-form label{font-size:12px;color:var(--muted);margin-top:4px}.auth-form input{width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--border);background:var(--bg);color:#fff;outline:none}.auth-form input:focus{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-dim)}.auth-submit{width:100%;padding:13px;border:0;border-radius:11px;background:var(--teal);color:#06231F;font-weight:800;margin-top:10px}.auth-submit:disabled{opacity:.6;cursor:wait}.auth-error{min-height:18px;color:var(--danger);font-size:12px;text-align:center}.auth-switch{text-align:center;color:var(--muted);font-size:12px}.auth-switch button{border:0;background:none;color:var(--teal);font-weight:700}
+#app{height:100vh;grid-template-columns:240px 1fr 210px;display:none}#app.active{display:grid}
+#channels-sidebar,#members-sidebar{background:var(--panel);overflow-y:auto}.sidebar-eyebrow{padding:10px 16px 8px;font-size:11px;font-weight:700;color:var(--muted)}.channel-item{padding:9px 16px;margin:1px 10px;border-radius:8px;color:var(--muted);font-size:14px;cursor:pointer}.channel-item:hover{background:var(--elev);color:var(--text)}.channel-item.active{background:var(--teal-dim);color:var(--text)}.hash{color:var(--teal);font-weight:700}
+.voice-room{margin:1px 10px 2px;border-radius:8px;overflow:hidden}.voice-room-header{padding:9px 12px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;align-items:center;border-radius:8px}.voice-room-header:hover{background:var(--elev);color:var(--text)}.voice-room-header.connected{background:var(--gold-dim);color:var(--gold)}.label{display:flex;gap:8px}.voice-count{font-size:10px;background:var(--elev);padding:2px 7px;border-radius:20px}.voice-participants{padding:2px 30px 8px;display:flex;flex-direction:column;gap:5px}.voice-participant{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}.room-admin-badge{font-size:9px;color:var(--gold);margin-right:auto}.ban-user-btn{margin-right:auto;border:0;background:none;color:var(--danger);font-size:10px}
+#create-room-btn{margin:4px 10px 8px;width:calc(100% - 20px);padding:9px;border:1px solid var(--border);border-radius:8px;background:var(--elev);color:var(--text);font-weight:700}
+#voice-controls{display:none;margin-top:auto;padding:12px 14px;background:var(--panel2);border-top:1px solid var(--border);flex-direction:column;gap:9px}#voice-controls.active{display:flex}.status{font-size:12px;color:var(--online);font-weight:600}.btns{display:flex;gap:6px}.btns button{flex:1;padding:9px;border:0;border-radius:8px;background:var(--elev);color:#fff}.btns #mute-btn.muted{background:var(--danger)}#leave-voice-btn{border:1px solid var(--danger)!important;color:var(--danger)!important;background:transparent!important}
+#chat-screen{display:flex;flex-direction:column;height:100vh;min-width:0}#chat-header{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-weight:700}#user-menu{margin-right:auto;display:flex;align-items:center;gap:8px}.user-name{color:var(--muted);font-size:12px}.logout-btn{border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:7px 10px}.logout-btn:hover{background:var(--danger);border-color:var(--danger)}
+#messages{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:14px}#messages:empty::after{content:"هنوز پیامی نیست — اولین نفر باش که چیزی می‌نویسه";color:var(--muted);font-size:13px;text-align:center;margin:auto}.msg-row{display:flex;gap:10px;align-items:flex-start;animation:msg .18s}.avatar{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#06231F}.msg-body{max-width:68%}.msg-bubble{background:var(--panel);padding:10px 14px;border-radius:4px 14px 14px 14px;font-size:14.5px;line-height:1.6;word-break:break-word}.msg-meta{display:flex;gap:8px;align-items:baseline;margin-bottom:4px;padding:0 2px}.author{font-size:12.5px;font-weight:700}.time{font-size:10.5px;color:var(--muted)}@keyframes msg{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+#chat-form{display:flex;padding:13px 16px;background:var(--panel);margin:0 16px 16px;border-radius:var(--radius);border:1px solid var(--border);gap:8px}#message-input{flex:1;padding:6px;border:0;background:none;color:#fff;outline:0;font-size:14.5px}#chat-form button{background:var(--teal);color:#06231F;border:0;border-radius:8px;padding:8px 16px;font-weight:700}
+#members-sidebar{padding:16px 0;border-right:1px solid var(--border)}#members-list{display:flex;flex-direction:column;gap:2px}.member-item{display:flex;align-items:center;gap:9px;padding:7px 16px;font-size:13.5px}.avatar-sm{width:22px;height:22px;border-radius:7px;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#06231F;position:relative}.status-dot{width:8px;height:8px;border-radius:50%;background:var(--online);border:2px solid var(--panel);position:absolute;bottom:-2px;left:-2px}
+.room-create-modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;z-index:1000}.room-create-modal.active{display:flex}.room-create-card{width:min(360px,calc(100vw - 30px));background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 20px 60px #0008}.room-create-card h3{margin-bottom:12px}.room-create-card input{width:100%;padding:11px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:#fff;outline:0}.room-create-actions{display:flex;gap:8px;margin-top:12px}.room-create-actions button{flex:1;padding:9px;border:0;border-radius:8px;font-weight:700}.confirm{background:var(--teal);color:#06231F}.cancel{background:var(--elev);color:#fff}
+@media(max-width:820px){#app.active{grid-template-columns:76px 1fr}#members-sidebar{display:none}.sidebar-eyebrow{display:none}.channel-item{display:flex;justify-content:center;padding:10px 0}.channel-item span:not(.hash),.voice-room-header .label span:last-child,.voice-count,.voice-participants{display:none}.voice-room-header{justify-content:center;padding:10px 0}}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="auth-logo">💬</div>
+      <h1>گفتگو</h1>
+      <p>چت متنی و صوتی، بدون هیچ نصبی</p>
+    </div>
+    <div class="auth-tabs">
+      <button id="login-tab" class="active">ورود</button>
+      <button id="register-tab">ثبت‌نام</button>
+    </div>
+
+    <div id="login-form" class="auth-form active">
+      <label>ایمیل</label>
+      <input id="login-email" type="email" placeholder="example@gmail.com" autocomplete="email">
+      <label>رمز عبور</label>
+      <input id="login-password" type="password" placeholder="رمز عبور" autocomplete="current-password">
+      <button class="auth-submit" id="login-btn">ورود به گفتگو</button>
+      <div class="auth-error" id="login-error"></div>
+      <div class="auth-switch">حساب نداری؟ <button id="go-register">ثبت‌نام کن</button></div>
+    </div>
+
+    <div id="register-form" class="auth-form">
+      <label>نام نمایشی</label>
+      <input id="register-name" type="text" maxlength="20" placeholder="مثلاً Falafel" autocomplete="nickname">
+      <label>ایمیل</label>
+      <input id="register-email" type="email" placeholder="example@gmail.com" autocomplete="email">
+      <label>رمز عبور</label>
+      <input id="register-password" type="password" placeholder="حداقل ۶ کاراکتر" autocomplete="new-password">
+      <label>تکرار رمز عبور</label>
+      <input id="register-password2" type="password" placeholder="رمز را دوباره وارد کن" autocomplete="new-password">
+      <button class="auth-submit" id="register-btn">ساخت حساب</button>
+      <div class="auth-error" id="register-error"></div>
+      <div class="auth-switch">حساب داری؟ <button id="go-login">وارد شو</button></div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="channels-sidebar">
+    <div class="sidebar-eyebrow">چنل‌های متنی</div>
+    <div class="channel-item active" data-channel="عمومی" onclick="switchChannel('عمومی')"><span class="hash">#</span><span>عمومی</span></div>
+    <div class="sidebar-eyebrow" style="margin-top:16px">چنل‌های صوتی</div>
+    <button id="create-room-btn" onclick="openCreateRoom()">＋ ساخت اتاق</button>
+    <div id="voice-rooms-list"></div>
+    <div id="voice-controls">
+      <div class="status">● متصل به «<span id="connected-room-name"></span>»</div>
+      <div class="btns"><button id="mute-btn" onclick="toggleMute()">🎤 قطع میکروفون</button><button id="leave-voice-btn" onclick="leaveVoice()">خروج</button></div>
+    </div>
+  </div>
+
+  <div id="chat-screen">
+    <div id="chat-header">
+      <span class="hash">#</span><span id="current-channel-name">عمومی</span>
+      <div id="user-menu">
+        <span class="user-name" id="user-menu-name"></span>
+        <button class="logout-btn" onclick="logout()">خروج</button>
+      </div>
+    </div>
+    <div id="messages"></div>
+    <form id="chat-form" onsubmit="sendMessage(event)">
+      <input id="message-input" placeholder="پیامت رو بنویس..." autocomplete="off">
+      <button type="submit">ارسال</button>
+    </form>
+  </div>
+
+  <div id="members-sidebar">
+    <div class="sidebar-eyebrow">آنلاین — <span id="online-count">0</span></div>
+    <div id="members-list"></div>
+  </div>
+</div>
+
+<div id="create-room-modal" class="room-create-modal">
+  <div class="room-create-card">
+    <h3>ساخت اتاق گفت‌وگو</h3>
+    <input id="new-room-name" maxlength="30" placeholder="مثلاً گیم شبانه">
+    <div class="room-create-actions">
+      <button class="confirm" onclick="createVoiceRoom()">ساخت اتاق</button>
+      <button class="cancel" onclick="closeCreateRoom()">انصراف</button>
+    </div>
+  </div>
+</div>
+<div id="remote-audios" style="display:none"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyCOXFiGI3AgMB_ENQeV8o4GDMAGiOqDbhM",
+  authDomain:"irandc.firebaseapp.com",
+  projectId:"irandc",
+  storageBucket:"irandc.firebasestorage.app",
+  messagingSenderId:"211686258145",
+  appId:"1:211686258145:web:5841c45741c58b1af80ea0"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore(),auth=firebase.auth();
+
+const MAX_VOICE_PEERS=4;
+const DEFAULT_VOICE_ROOMS=[];
+let VOICE_ROOMS=[...DEFAULT_VOICE_ROOMS],unsubscribeRooms=null,unsubscribeMessages=null;
+const ICE_SERVERS={iceServers:[
+ {urls:"stun:stun.l.google.com:19302"},
+ {urls:"stun:stun1.l.google.com:19302"}
+]};
+const AVATAR_COLORS=["#2FC9BC","#E8A33D","#7C9CFF","#E4574C","#B084F5","#3FCB8C"];
+let username="",currentChannel="عمومی",currentVoiceRoom=null,localStream=null,isMuted=false;
+let peerConnections={},unsubSignals=null,unsubParticipants=null,presenceTimer=null,appStarted=false;
+
+function colorForName(name){let h=0;for(let i=0;i<name.length;i++)h=name.charCodeAt(i)+((h<<5)-h);return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length]}
+function initialsFor(name){return name.trim().slice(0,2)}
+function escapeHtml(str){const d=document.createElement("div");d.textContent=str;return d.innerHTML}
+function safeId(v){return Array.from(v).map(c=>/[a-zA-Z0-9_-]/.test(c)?c:"_").join("")}
+
+function authError(code){
+ const m={
+ "auth/email-already-in-use":"این ایمیل قبلاً ثبت شده.",
+ "auth/invalid-email":"ایمیل معتبر نیست.",
+ "auth/weak-password":"رمز عبور باید حداقل ۶ کاراکتر باشد.",
+ "auth/invalid-credential":"ایمیل یا رمز عبور اشتباه است.",
+ "auth/user-not-found":"این حساب وجود ندارد.",
+ "auth/wrong-password":"رمز عبور اشتباه است.",
+ "auth/user-disabled":"این حساب غیرفعال شده.",
+ "auth/network-request-failed":"اتصال اینترنت مشکل دارد."
+ };return m[code]||"عملیات انجام نشد.";
+}
+function showAuth(mode){
+ const l=document.getElementById("login-form"),r=document.getElementById("register-form");
+ l.classList.toggle("active",mode==="login");r.classList.toggle("active",mode==="register");
+ document.getElementById("login-tab").classList.toggle("active",mode==="login");
+ document.getElementById("register-tab").classList.toggle("active",mode==="register");
+}
+loginTab.onclick=()=>showAuth("login");registerTab.onclick=()=>showAuth("register");
+document.getElementById("go-register").onclick=()=>showAuth("register");
+document.getElementById("go-login").onclick=()=>showAuth("login");
+
+async function registerAccount(){
+ const name=document.getElementById("register-name").value.trim(),email=document.getElementById("register-email").value.trim();
+ const p=document.getElementById("register-password").value,p2=document.getElementById("register-password2").value;
+ const err=document.getElementById("register-error"),btn=document.getElementById("register-btn");err.textContent="";
+ if(name.length<2)return err.textContent="نام نمایشی حداقل ۲ کاراکتر باشد.";
+ if(!email)return err.textContent="ایمیل را وارد کن.";
+ if(p.length<6)return err.textContent="رمز عبور باید حداقل ۶ کاراکتر باشد.";
+ if(p!==p2)return err.textContent="رمزهای عبور یکی نیستند.";
+ btn.disabled=true;btn.textContent="در حال ساخت حساب...";
+ try{
+   const c=await auth.createUserWithEmailAndPassword(email,p);
+   await c.user.updateProfile({displayName:name});
+   await db.collection("users").doc(c.user.uid).set({uid:c.user.uid,name,email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+ }catch(e){console.error(e);err.textContent=authError(e.code)}
+ finally{btn.disabled=false;btn.textContent="ساخت حساب"}
+}
+async function loginWithEmail(){
+ const email=document.getElementById("login-email").value.trim(),p=document.getElementById("login-password").value;
+ const err=document.getElementById("login-error"),btn=document.getElementById("login-btn");err.textContent="";
+ if(!email||!p)return err.textContent="ایمیل و رمز عبور را وارد کن.";
+ btn.disabled=true;btn.textContent="در حال ورود...";
+ try{await auth.signInWithEmailAndPassword(email,p)}
+ catch(e){console.error(e);err.textContent=authError(e.code)}
+ finally{btn.disabled=false;btn.textContent="ورود به گفتگو"}
+}
+document.getElementById("login-btn").onclick=loginWithEmail;
+document.getElementById("register-btn").onclick=registerAccount;
+
+auth.onAuthStateChanged(user=>{
+ if(user)startApp(user);else{
+  appStarted=false;username="";
+  document.getElementById("login-screen").style.display="flex";
+  document.getElementById("app").classList.remove("active");
+ }
+});
+
+function startApp(user){
+ if(appStarted)return;appStarted=true;
+ username=user.displayName||user.email.split("@")[0];
+ document.getElementById("user-menu-name").textContent=username;
+ document.getElementById("login-screen").style.display="none";
+ document.getElementById("app").classList.add("active");
+ switchChannel("عمومی");setPresence();clearInterval(presenceTimer);presenceTimer=setInterval(setPresence,20000);
+ listenForMembers();listenForVoiceRooms();renderVoiceRoomsList();
+}
+async function logout(){
+ try{
+  if(currentVoiceRoom)await leaveVoice();
+  if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null}
+  if(username)await db.collection("presence").doc(username).delete().catch(()=>{});
+  await auth.signOut();
+ }catch(e){console.error(e);alert("خروج انجام نشد.")}
+}
+
+function switchChannel(channel){
+ currentChannel=channel;document.getElementById("current-channel-name").textContent=channel;
+ document.querySelectorAll(".channel-item").forEach(x=>x.classList.toggle("active",x.dataset.channel===channel));
+ if(unsubscribeMessages)unsubscribeMessages();listenForMessages();
+}
+async function sendMessage(e){
+ e.preventDefault();if(!auth.currentUser)return;
+ const input=document.getElementById("message-input"),text=input.value.trim();if(!text)return;
+ try{await db.collection("channels").doc(currentChannel).collection("messages").add({
+  uid:auth.currentUser.uid,author:username,text,timestamp:firebase.firestore.FieldValue.serverTimestamp()
+ });input.value=""}catch(err){console.error(err);alert("ارسال پیام انجام نشد.")}
+}
+function listenForMessages(){
+ unsubscribeMessages=db.collection("channels").doc(currentChannel).collection("messages").orderBy("timestamp","asc").limitToLast(100)
+ .onSnapshot(s=>{
+  const c=document.getElementById("messages");c.innerHTML="";
+  s.forEach(doc=>{
+   const d=doc.data(),row=document.createElement("div");row.className="msg-row";
+   const t=d.timestamp?d.timestamp.toDate().toLocaleTimeString("fa-IR",{hour:"2-digit",minute:"2-digit"}):"";
+   const color=colorForName(d.author||"کاربر");
+   row.innerHTML=`<div class="avatar" style="background:${color}">${escapeHtml(initialsFor(d.author||"کاربر"))}</div><div class="msg-body"><div class="msg-meta"><span class="author" style="color:${color}">${escapeHtml(d.author||"کاربر")}</span><span class="time">${t}</span></div><div class="msg-bubble">${escapeHtml(d.text||"")}</div></div>`;
+   c.appendChild(row);
+  });c.scrollTop=c.scrollHeight;
+ },e=>console.error("messages:",e));
+}
+function setPresence(){
+ if(!auth.currentUser||!username)return;
+ db.collection("presence").doc(username).set({uid:auth.currentUser.uid,name:username,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(console.error);
+}
+function listenForMembers(){
+ db.collection("presence").onSnapshot(s=>{
+  const now=Date.now(),list=document.getElementById("members-list");list.innerHTML="";let count=0;
+  s.forEach(doc=>{const d=doc.data();if(!d.lastSeen)return;const last=d.lastSeen.toDate().getTime();if(now-last<40000){
+   count++;const color=colorForName(doc.id),div=document.createElement("div");div.className="member-item";
+   div.innerHTML=`<span class="avatar-sm" style="background:${color}">${escapeHtml(initialsFor(doc.id))}<span class="status-dot"></span></span>${escapeHtml(doc.id)}`;list.appendChild(div);
+  }});
+  document.getElementById("online-count").textContent=count;
+ });
+}
+
+function openCreateRoom(){document.getElementById("create-room-modal").classList.add("active");document.getElementById("new-room-name").value="";setTimeout(()=>document.getElementById("new-room-name").focus(),50)}
+function closeCreateRoom(){document.getElementById("create-room-modal").classList.remove("active")}
+async function createVoiceRoom(){
+ const name=document.getElementById("new-room-name").value.trim();if(!name)return alert("اسم اتاق را وارد کن.");
+ if(name.length>30)return alert("اسم اتاق حداکثر ۳۰ کاراکتر است.");
+ try{
+  const ref=db.collection("voiceRooms").doc(name),existing=await ref.get();if(existing.exists)return alert("این اتاق از قبل وجود دارد.");
+  await ref.set({name,owner:auth.currentUser.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),dynamic:true});
+  closeCreateRoom();joinVoice(name);
+ }catch(e){console.error(e);alert("ساخت اتاق انجام نشد.")}
+}
+function listenForVoiceRooms(){
+ if(unsubscribeRooms)unsubscribeRooms();
+ unsubscribeRooms=db.collection("voiceRooms").onSnapshot(s=>{
+  const dynamic=[];s.forEach(d=>{if(d.data().dynamic===true)dynamic.push(d.id)});
+  VOICE_ROOMS=[...DEFAULT_VOICE_ROOMS,...dynamic.filter(x=>!DEFAULT_VOICE_ROOMS.includes(x))];renderVoiceRoomsList();
+ },e=>console.error(e));
+}
+function renderVoiceRoomsList(){
+ const c=document.getElementById("voice-rooms-list");c.innerHTML="";
+ VOICE_ROOMS.forEach(room=>{
+  const div=document.createElement("div");div.className="voice-room";
+  div.innerHTML=`<div class="voice-room-header" data-room="${escapeHtml(room)}"><span class="label"><span>🔊</span><span>${escapeHtml(room)}</span></span><span class="voice-count" id="count-${safeId(room)}">0/${MAX_VOICE_PEERS}</span></div><div class="voice-participants" id="participants-${safeId(room)}"></div>`;
+  const header=div.querySelector(".voice-room-header");header.onclick=()=>{if(currentVoiceRoom!==room)joinVoice(room)};c.appendChild(div);
+  db.collection("voiceRooms").doc(room).collection("peers").onSnapshot(s=>{
+   const ce=document.getElementById(`count-${safeId(room)}`),le=document.getElementById(`participants-${safeId(room)}`);if(!ce||!le)return;
+   ce.textContent=`${s.size}/${MAX_VOICE_PEERS}`;le.innerHTML="";
+   s.forEach(doc=>{
+    const d=doc.data(),row=document.createElement("div");row.className="voice-participant";row.innerHTML=`<span>${d.muted?"🔇":"🎙"}</span><span>${escapeHtml(doc.id)}</span>`;
+    if(d.admin){const b=document.createElement("span");b.className="room-admin-badge";b.textContent="ادمین";row.appendChild(b)}
+    if(auth.currentUser)db.collection("voiceRooms").doc(room).get().then(rd=>{
+      if(rd.exists&&rd.data().owner===auth.currentUser.uid&&doc.id!==username){
+       const b=document.createElement("button");b.className="ban-user-btn";b.textContent="بن";b.onclick=e=>{e.stopPropagation();banUserFromRoom(room,doc.id)};row.appendChild(b);
+      }
+    }).catch(()=>{});
+    le.appendChild(row);
+   });
+  });
+ });
+}
+async function banUserFromRoom(room,userToBan){
+ const rd=await db.collection("voiceRooms").doc(room).get();
+ if(!rd.exists||rd.data().owner!==auth.currentUser.uid)return alert("فقط سازنده اتاق می‌تواند بن کند.");
+ if(!confirm(`کاربر «${userToBan}» بن شود؟`))return;
+ try{
+  await db.collection("voiceRooms").doc(room).collection("bans").doc(userToBan).set({bannedBy:auth.currentUser.uid,bannedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  await db.collection("voiceRooms").doc(room).collection("peers").doc(userToBan).delete();
+ }catch(e){console.error(e);alert("بن انجام نشد.")}
+}
+async function isBannedFromRoom(room){const d=await db.collection("voiceRooms").doc(room).collection("bans").doc(username).get();return d.exists}
+
+async function joinVoice(room){
+ if(!auth.currentUser)return;
+ if(await isBannedFromRoom(room))return alert("شما از این اتاق بن شده‌اید.");
+ const rd=await db.collection("voiceRooms").doc(room).get(),owner=rd.exists?rd.data().owner:null;
+ const peers=db.collection("voiceRooms").doc(room).collection("peers"),snap=await peers.get();
+ if(snap.size>=MAX_VOICE_PEERS)return alert(`این اتاق پر است (حداکثر ${MAX_VOICE_PEERS} نفر).`);
+ if(currentVoiceRoom)await leaveVoice();
+ try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false})}catch(e){return alert("دسترسی به میکروفون رد شد یا در دسترس نیست.")}
+ currentVoiceRoom=room;isMuted=false;document.getElementById("voice-controls").classList.add("active");document.getElementById("connected-room-name").textContent=room;
+ document.querySelectorAll(".voice-room-header").forEach(x=>x.classList.toggle("connected",x.dataset.room===room));
+ const existing=[];snap.forEach(d=>existing.push(d.id));
+ await peers.doc(username).set({uid:auth.currentUser.uid,joinedAt:firebase.firestore.FieldValue.serverTimestamp(),muted:false,admin:owner===auth.currentUser.uid});
+ for(const id of existing)await createPeerConnection(room,id,true);
+ unsubParticipants=peers.onSnapshot(s=>s.docChanges().forEach(ch=>{if(ch.type==="removed"&&ch.doc.id!==username)closePeerConnection(ch.doc.id)}));
+ unsubSignals=db.collection("voiceRooms").doc(room).collection("signals").where("to","==",username).onSnapshot(s=>s.docChanges().forEach(async ch=>{if(ch.type!=="added")return;await handleSignal(room,ch.doc.data());ch.doc.ref.delete()}));
+}
+async function createPeerConnection(room,peerId,initiator){
+ if(peerConnections[peerId])return peerConnections[peerId];const pc=new RTCPeerConnection(ICE_SERVERS);peerConnections[peerId]=pc;
+ localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+ pc.ontrack=e=>{let a=document.getElementById("audio-"+peerId);if(!a){a=document.createElement("audio");a.id="audio-"+peerId;a.autoplay=true;document.getElementById("remote-audios").appendChild(a)}a.srcObject=e.streams[0]};
+ pc.onicecandidate=e=>{if(e.candidate)db.collection("voiceRooms").doc(room).collection("signals").add({from:username,to:peerId,type:"candidate",data:JSON.stringify(e.candidate),timestamp:firebase.firestore.FieldValue.serverTimestamp()})};
+ if(initiator){const offer=await pc.createOffer();await pc.setLocalDescription(offer);await db.collection("voiceRooms").doc(room).collection("signals").add({from:username,to:peerId,type:"offer",data:JSON.stringify(offer),timestamp:firebase.firestore.FieldValue.serverTimestamp()})}
+ return pc;
+}
+async function handleSignal(room,s){
+ const id=s.from;let pc=peerConnections[id];
+ if(s.type==="offer"){if(!pc)pc=await createPeerConnection(room,id,false);await pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(s.data)));const a=await pc.createAnswer();await pc.setLocalDescription(a);await db.collection("voiceRooms").doc(room).collection("signals").add({from:username,to:id,type:"answer",data:JSON.stringify(a),timestamp:firebase.firestore.FieldValue.serverTimestamp()})}
+ else if(s.type==="answer"&&pc)await pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(s.data)));
+ else if(s.type==="candidate"&&pc){try{await pc.addIceCandidate(new RTCIceCandidate(JSON.parse(s.data)))}catch(e){}}
+}
+function closePeerConnection(id){if(peerConnections[id]){peerConnections[id].close();delete peerConnections[id]}const a=document.getElementById("audio-"+id);if(a)a.remove()}
+function toggleMute(){
+ if(!localStream)return;isMuted=!isMuted;localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted);
+ const b=document.getElementById("mute-btn");b.textContent=isMuted?"🔇 روشن کردن میکروفون":"🎤 قطع میکروفون";b.classList.toggle("muted",isMuted);
+ if(currentVoiceRoom)db.collection("voiceRooms").doc(currentVoiceRoom).collection("peers").doc(username).update({muted:isMuted}).catch(()=>{});
+}
+let leavingVoice=false;
+async function leaveVoice(){
+ if(!currentVoiceRoom||leavingVoice)return;leavingVoice=true;const room=currentVoiceRoom;currentVoiceRoom=null;
+ if(unsubSignals){unsubSignals();unsubSignals=null}if(unsubParticipants){unsubParticipants();unsubParticipants=null}
+ Object.keys(peerConnections).forEach(closePeerConnection);
+ if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+ document.getElementById("voice-controls").classList.remove("active");document.getElementById("mute-btn").textContent="🎤 قطع میکروفون";document.getElementById("mute-btn").classList.remove("muted");
+ document.querySelectorAll(".voice-room-header").forEach(x=>x.classList.remove("connected"));
+ try{await db.collection("voiceRooms").doc(room).collection("peers").doc(username).delete()}catch(e){}finally{leavingVoice=false}
+}
+
+document.getElementById("new-room-name").addEventListener("keydown",e=>{if(e.key==="Enter")createVoiceRoom();if(e.key==="Escape")closeCreateRoom()});
+window.addEventListener("beforeunload",()=>{if(username)db.collection("presence").doc(username).delete().catch(()=>{});if(localStream)localStream.getTracks().forEach(t=>t.stop())});
+</script>
+</body>
+</html>
